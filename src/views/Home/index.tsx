@@ -1,5 +1,16 @@
 import { useRef, useState } from 'react';
-import { Button, Popconfirm, Table, message } from 'antd';
+import {
+  Button,
+  Col,
+  Form,
+  Input,
+  InputNumber,
+  Popconfirm,
+  Row,
+  Select,
+  Table,
+  message,
+} from 'antd';
 import { IUserDialogRef, IUserInfo } from '../../constants/type';
 import UpdateUserInfoDialog from './UpdateUserInfoDialog';
 import style from './index.module.scss';
@@ -22,8 +33,10 @@ const initDataSource = [
 ];
 
 const Home = () => {
+  const [isCollapsed, setIsCollapsed] = useState(false);
   const [dataSource, setDataSource] = useState<IUserInfo[]>(initDataSource);
   const ref = useRef<IUserDialogRef>(null);
+  const [form] = Form.useForm();
 
   const getUniqueKey = () => {
     // 生成随机且唯一的key
@@ -81,6 +94,10 @@ const Home = () => {
       return '-';
     }
     return v;
+  };
+
+  const toggleCollapsed = () => {
+    setIsCollapsed(!isCollapsed);
   };
 
   const columns = [
@@ -148,9 +165,106 @@ const Home = () => {
     },
   ];
 
+  const handleSearch = () => {
+    form.validateFields().then(res => {
+      if (!res.name && !res.sex && !res.age) {
+        return;
+      }
+      let newData = [];
+      // 筛选性别
+      if (res.sex) {
+        newData = dataSource.filter(item => item.sex === res.sex);
+      } else {
+        newData = [...dataSource];
+      }
+      // 筛选年龄
+      if (res.age) {
+        newData = newData.filter(item => {
+          if (item.age === res.age) {
+            return true;
+          }
+          return false;
+        });
+      }
+      // 筛选姓名
+      if (res.name) {
+        newData = newData.filter(item => {
+          if (item.name.indexOf(res.name) !== -1) {
+            return true;
+          }
+          return false;
+        });
+      }
+      setDataSource(newData);
+    });
+  };
+
+  const handleReset = () => {
+    form.resetFields();
+    form.setFieldsValue({ name: '', age: '', sex: '' });
+    setDataSource(initDataSource);
+  };
+
+  const getSearchOption = () => {
+    return (
+      <>
+        <Button type="primary" onClick={handleSearch}>
+          查询
+        </Button>
+        <Button className={style.searchBtn} onClick={handleReset}>
+          重置
+        </Button>
+        <a className={style.searchBtn} onClick={toggleCollapsed}>
+          {isCollapsed ? '收起' : '展开'}
+        </a>
+      </>
+    );
+  };
+
   return (
     <div className={style.page}>
       <div className={style.title}>用户管理系统</div>
+      <div className={style.search}>
+        <Form form={form} labelCol={{ flex: '80px' }} wrapperCol={{ flex: 1 }}>
+          <Row>
+            <Col span={8}>
+              <Form.Item label="姓名" name="name">
+                <Input />
+              </Form.Item>
+            </Col>
+            <Col span={8}>
+              <Form.Item label="性别" name="sex">
+                <Select
+                  options={[
+                    { value: 1, label: '男' },
+                    { value: 2, label: '女' },
+                  ]}
+                />
+              </Form.Item>
+            </Col>
+            {!isCollapsed ? (
+              <Col span={8} className={style.searchOption}>
+                {getSearchOption()}
+              </Col>
+            ) : (
+              <Col span={8}>
+                <Form.Item label="年龄" name="age">
+                  <InputNumber />
+                </Form.Item>
+              </Col>
+            )}
+          </Row>
+          {isCollapsed && (
+            <Row>
+              <Col span={8} />
+              <Col span={8} />
+              <Col span={8} className={style.searchOption}>
+                {getSearchOption()}
+              </Col>
+            </Row>
+          )}
+        </Form>
+      </div>
       <div className={style.create}>
         <Button type="primary" onClick={handleCreate}>
           新增
