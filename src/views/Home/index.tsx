@@ -13,8 +13,10 @@ import {
   TableColumnsType,
   message,
 } from 'antd';
+import dayjs from 'dayjs';
 import { IUserDialogRef, IUserInfo } from '../../constants/type';
 import UpdateUserInfoDialog from './UpdateUserInfoDialog';
+import 'dayjs/locale/zh-cn';
 import style from './index.module.scss';
 
 const initDataSource = [
