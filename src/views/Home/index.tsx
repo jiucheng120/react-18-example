@@ -1,5 +1,5 @@
 import { useRef, useState } from 'react';
-import { Button, Popconfirm, Table } from 'antd';
+import { Button, Popconfirm, Table, message } from 'antd';
 import { IUserDialogRef, IUserInfo } from '../../constants/type';
 import UpdateUserInfoDialog from './UpdateUserInfoDialog';
 import style from './index.module.scss';
@@ -42,6 +42,7 @@ const Home = () => {
               createdAt: new Date().toLocaleString(),
             },
           ]);
+          message.success('新增成功！');
         },
       },
     });
@@ -59,6 +60,7 @@ const Home = () => {
             return item;
           });
           setDataSource(newData);
+          message.success('更新成功！');
         },
       },
     });
@@ -67,6 +69,7 @@ const Home = () => {
   const handleDelete = (record: IUserInfo) => {
     const newData = dataSource.filter(item => item.key !== record.key);
     setDataSource(newData);
+    message.success('删除成功！');
   };
 
   const handleView = (record: IUserInfo) => {
@@ -117,9 +120,11 @@ const Home = () => {
       title: '创建时间',
       dataIndex: 'createdAt',
       key: 'createdAt',
+      defaultSortOrder: 'ascend',
       render: (v: string) => defaultCell(v),
       sorter: (a: IUserInfo, b: IUserInfo) =>
         new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime(),
+      sortDirections: ['ascend', 'descend', 'ascend'],
     },
     {
       title: '操作',
