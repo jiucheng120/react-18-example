@@ -274,12 +274,12 @@ const Home = () => {
           </Row>
           {isCollapsed && (
             <Row>
-              <Col span={12}>
+              <Col span={8}>
                 <Form.Item label="创建时间" name="createdAt">
-                  <RangePicker showTime />
+                  <RangePicker className={style.datePicker} showTime />
                 </Form.Item>
               </Col>
-              <Col span={4} />
+              <Col span={8} />
               <Col span={8} className={style.searchOption}>
                 {getSearchOption()}
               </Col>
