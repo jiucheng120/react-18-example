@@ -1,6 +1,7 @@
 import { useRef, useState } from 'react';
 import {
   Button,
+  Card,
   Col,
   DatePicker,
   Form,
@@ -13,7 +14,6 @@ import {
   TableColumnsType,
   message,
 } from 'antd';
-import dayjs from 'dayjs';
 import { IUserDialogRef, IUserInfo } from '../../constants/type';
 import UpdateUserInfoDialog from './UpdateUserInfoDialog';
 import 'dayjs/locale/zh-cn';
@@ -244,7 +244,7 @@ const Home = () => {
   return (
     <div className={style.page}>
       <div className={style.title}>用户管理系统</div>
-      <div className={style.search}>
+      <Card className={style.search}>
         <Form form={form} labelCol={{ flex: '80px' }} wrapperCol={{ flex: 1 }}>
           <Row>
             <Col span={8}>
@@ -288,13 +288,15 @@ const Home = () => {
             </Row>
           )}
         </Form>
-      </div>
-      <div className={style.create}>
-        <Button type="primary" onClick={handleCreate}>
-          新增
-        </Button>
-      </div>
-      <Table dataSource={dataSource} columns={columns}></Table>
+      </Card>
+      <Card className={style.content}>
+        <div className={style.create}>
+          <Button type="primary" onClick={handleCreate}>
+            新增
+          </Button>
+        </div>
+        <Table dataSource={dataSource} columns={columns} />
+      </Card>
       <UpdateUserInfoDialog ref={ref} />
     </div>
   );
