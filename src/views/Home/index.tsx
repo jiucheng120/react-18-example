@@ -2,6 +2,7 @@ import { useRef, useState } from 'react';
 import {
   Button,
   Col,
+  DatePicker,
   Form,
   Input,
   InputNumber,
@@ -9,6 +10,7 @@ import {
   Row,
   Select,
   Table,
+  TableColumnsType,
   message,
 } from 'antd';
 import { IUserDialogRef, IUserInfo } from '../../constants/type';
@@ -31,6 +33,8 @@ const initDataSource = [
     createdAt: new Date('2024-3-15 09:08:08').toLocaleString(),
   },
 ];
+
+const { RangePicker } = DatePicker;
 
 const Home = () => {
   const [isCollapsed, setIsCollapsed] = useState(false);
@@ -100,7 +104,7 @@ const Home = () => {
     setIsCollapsed(!isCollapsed);
   };
 
-  const columns = [
+  const columns: TableColumnsType<IUserInfo> = [
     {
       title: '姓名',
       dataIndex: 'name',
@@ -128,7 +132,7 @@ const Home = () => {
       render: (v: string) => defaultCell(v),
       sorter: (a: IUserInfo, b: IUserInfo) => {
         if (a.age === '' || b.age === '') {
-          return false;
+          return 0;
         }
         return a.age - b.age;
       },
@@ -167,7 +171,7 @@ const Home = () => {
 
   const handleSearch = () => {
     form.validateFields().then(res => {
-      if (!res.name && !res.sex && !res.age) {
+      if (!res.name && !res.sex && !res.age && !res.createdAt) {
         return;
       }
       let newData = [];
@@ -190,6 +194,20 @@ const Home = () => {
       if (res.name) {
         newData = newData.filter(item => {
           if (item.name.indexOf(res.name) !== -1) {
+            return true;
+          }
+          return false;
+        });
+      }
+
+      // 筛选创建时间
+      if (res.createdAt) {
+        newData = newData.filter(item => {
+          const time = new Date(item.createdAt).getTime();
+          if (
+            time > res.createdAt[0].valueOf() &&
+            time < res.createdAt[1].valueOf()
+          ) {
             return true;
           }
           return false;
@@ -256,8 +274,12 @@ const Home = () => {
           </Row>
           {isCollapsed && (
             <Row>
-              <Col span={8} />
-              <Col span={8} />
+              <Col span={12}>
+                <Form.Item label="创建时间" name="createdAt">
+                  <RangePicker showTime />
+                </Form.Item>
+              </Col>
+              <Col span={4} />
               <Col span={8} className={style.searchOption}>
                 {getSearchOption()}
               </Col>

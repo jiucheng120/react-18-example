@@ -1,5 +1,5 @@
 const NotFound = () => {
-  return <>您访问的页面不存在哦~</>;
+  return <>404，您访问的页面不存在哦~</>;
 };
 
 export default NotFound;
